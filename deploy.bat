@@ -1,3 +1,21 @@
+#Upload to github first time
+git init
+git add .
+git commit  -m "second commit"
+git branch -M main     #"to add a branch if you need"
+git remote add origin https://github.com/CodeCyborg/limitlessPricer.git
+git push -u origin main #change main by master if you did not select a branch 
+
+#pull request from github
+git remote add origin https://github.com/CodeCyborg/limitlessPricer.git
+git pull origin master 
+git push -f origin master #" -f to force push after a pull"
+
+
+
+
+
+
 # deploy Demo
 npm run build
 cd dist
