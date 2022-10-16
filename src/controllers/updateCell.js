@@ -223,7 +223,12 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     }
     else{
         value = formula.ltGtSignDeal(value);
-        $("#luckysheet-rich-text-editor").html(value);
+        //fixing bug where selection of a cell doesn't work when editing formula from functionbox
+        let _CB_editor = $(window.getSelection().anchorNode).closest("div");
+        if (_CB_editor.attr("id") != "luckysheet-functionbox-cell") {
+            $("#luckysheet-rich-text-editor").html(value);
+        }
+        //$("#luckysheet-rich-text-editor").html(value);
         if (!isnotfocus) {
             luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
         }
