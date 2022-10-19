@@ -1396,7 +1396,7 @@ div.luckysheet-sheets-m:hover {
     cursor: default;
     position: absolute;
     z-index: 10;
-    border-bottom: 1px solid #0188fb;
+    border-bottom: 2px solid rgb(43, 133, 100);
     bottom: 0;
     height: 100%;
     margin-left: 0px;
@@ -1532,7 +1532,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-rows-h-selected {
     position: absolute;
     z-index: 10;
-    border-right: 1px solid #0188fb;
+    border-right: 2px solid rgb(43, 133, 100);
     right: 0;
     width: 100%;
     margin-top: 2px;
@@ -1887,7 +1887,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     z-index: 14;
     /*border:1px solid #fff;*/
     margin: 0px 0 0 0px;
-    background: rgba(0, 80, 208, 0.15);
+    background: rgba(68, 68, 68, 0.15);
     display: none;
     /*transition: all 0.1s;*/
 }
@@ -2048,7 +2048,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     position: absolute;
     pointer-events: none;
     z-index: 16;
-    border: 2px solid #0188fb;
+    border: 2px solid rgb(43, 133, 100);
     margin: -1px 0 0 -1px;
     display: none;
     /*transition: all 0.1s;*/
@@ -2058,9 +2058,9 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     position: absolute;
     pointer-events: none;
     z-index: 15;
-    border: 1px solid #0188fb;
+    border: 1px solid rgb(43, 133, 100);
     margin: -1px 0 0 -1px;
-    background: rgba(1, 136, 251, 0.15);
+    background: rgba(143, 143, 143, 0.15);
     display: none;
     /*transition: all 0.1s;*/
 }
@@ -2081,7 +2081,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     height: 6px;
     bottom: -5px;
     cursor: crosshair;
-    background-color: #0188fb;
+    background-color: rgb(43, 133, 100);
     border: solid 1px #fff;
     z-index: 16;
     pointer-events: auto;
@@ -3063,7 +3063,7 @@ fieldset[disabled] .btn-danger.focus {
     top: -10000px;
     max-height: 9900px;
     max-width: 9900px;
-    border: 2px #5292f7 solid;
+    /*border: 2px #5292f7 solid;*/
     padding: 0 2px;
     margin: 0;
     z-index: 15;
@@ -3072,9 +3072,9 @@ fieldset[disabled] .btn-danger.focus {
     overflow: initial;
     white-space: pre-wrap;
     outline: none;
-    -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    /*-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);*/
     word-wrap: break-word;
 }
 
@@ -3110,7 +3110,7 @@ fieldset[disabled] .btn-danger.focus {
     line-height: 16px;
     font-size: 12px;
     padding: 1px 6px;
-    background-color: #5292f7;
+    background-color: rgb(43, 133, 100);
     border-radius: 2px;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
     color: white;

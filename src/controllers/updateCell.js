@@ -100,7 +100,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
     $("#luckysheet-input-box").removeAttr("style").css({ 
         "background-color": "rgb(255, 255, 255)", 
-        "padding": "0px 2px", 
+        "padding": "0px 1px", 
         "font-size": `${Store.defaultFontSize}pt`,
         "right": "auto", 
         "overflow-y": "auto",
@@ -251,6 +251,23 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
         input_postition["left"] = newLeft-2;
     }
+
+    input_postition["top"] = input_postition["top"] + 3 ;
+    input_postition["min-width"] = input_postition["min-width"] + 2;
+
+    let _cell = d[row_index][col_index];
+    if (_cell!=null && _cell["ht"] !== undefined){
+        if(_cell["ht"] == "0"){//0 center, 1 left, 2 right
+            input_postition["left"] = input_postition["left"] + 1;
+        }else if (_cell["ht"] == "1"){
+            input_postition["left"] = input_postition["left"] + 3;
+        }else{
+            input_postition["right"] = input_postition["right"] + 1;
+        }
+    }else{
+        input_postition["left"] = input_postition["left"] + 3;
+    }
+    
 
     $("#luckysheet-input-box").css(input_postition);
     $("#luckysheet-rich-text-editor").css(inputContentScale);

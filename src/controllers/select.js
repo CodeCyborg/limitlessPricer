@@ -82,9 +82,9 @@ function selectHightlightShow(isRestore = false) {
             Store.luckysheet_select_save[i]["top"] = row_pre_f;
             Store.luckysheet_select_save[i]["height"] = row_f - row_pre_f - 1;
 
-            Store.luckysheet_select_save[i]["left_move"] = col_pre;
+            Store.luckysheet_select_save[i]["left_move"] = col_pre - 1;
             Store.luckysheet_select_save[i]["width_move"] = col - col_pre - 1;
-            Store.luckysheet_select_save[i]["top_move"] = row_pre;
+            Store.luckysheet_select_save[i]["top_move"] = row_pre - 1;
             Store.luckysheet_select_save[i]["height_move"] = row - row_pre - 1;
 
             if (i == 0) {
@@ -96,7 +96,7 @@ function selectHightlightShow(isRestore = false) {
                             "top": Store.luckysheet_select_save[i]["top_move"],
                             "height": Store.luckysheet_select_save[i]["height_move"],
                             "display": "block",
-                            "border": "1px solid #0188fb"
+                            "border": "1px solid rgb(43 133 100)"
                         })
                             .find(".luckysheet-cs-draghandle")
                             .css("display", "block")
@@ -114,7 +114,7 @@ function selectHightlightShow(isRestore = false) {
                             "top": Store.luckysheet_select_save[i]["top_move"],
                             "height": Store.luckysheet_select_save[i]["height_move"],
                             "display": "block",
-                            "border": "1px solid #0188fb"
+                            "border": "2px solid rgb(43, 133, 100)"
                         })
                             .find(".luckysheet-cs-draghandle")
                             .css("display", "block")
@@ -133,7 +133,7 @@ function selectHightlightShow(isRestore = false) {
                         "top": Store.luckysheet_select_save[i]["top_move"],
                         "height": Store.luckysheet_select_save[i]["height_move"],
                         "display": "block",
-                        "border": "1px solid rgba(1, 136, 251, 0.15)"
+                        "border": "1px solid rgba(43, 133, 100, 0.15)"
                     })
                         .find(".luckysheet-cs-draghandle")
                         .css("display", "none")
@@ -143,7 +143,7 @@ function selectHightlightShow(isRestore = false) {
                 }
             }
             else {
-                $("#luckysheet-cell-selected-boxs").append('<div class="luckysheet-cell-selected" style="left: ' + Store.luckysheet_select_save[i]["left_move"] + 'px; width: ' + Store.luckysheet_select_save[i]["width_move"] + 'px; top: ' + Store.luckysheet_select_save[i]["top_move"] + 'px; height: ' + Store.luckysheet_select_save[i]["height_move"] + 'px; border: 1px solid rgba(1, 136, 251, 0.15); display: block;"></div>');
+                $("#luckysheet-cell-selected-boxs").append('<div class="luckysheet-cell-selected" style="left: ' + Store.luckysheet_select_save[i]["left_move"] + 'px; width: ' + Store.luckysheet_select_save[i]["width_move"] + 'px; top: ' + Store.luckysheet_select_save[i]["top_move"] + 'px; height: ' + Store.luckysheet_select_save[i]["height_move"] + 'px; display: block;"></div>');
             }
 
             if (i == Store.luckysheet_select_save.length - 1) {

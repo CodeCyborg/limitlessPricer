@@ -93,6 +93,9 @@ export default function luckysheetscrollevent(isadjust) {
         "z-index": $("#luckysheet-input-box").css("z-index")
     }).show();
 
+    $("#luckysheet-input-box").css({
+        "border": "1px dashed green"
+    });
     // if(scrollRequestAnimationFrameIni && Store.scrollRefreshSwitch){
     //     execScroll();
     //     scrollRequestAnimationFrameIni = false;
