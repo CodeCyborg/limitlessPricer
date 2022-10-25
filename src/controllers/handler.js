@@ -4068,7 +4068,7 @@ export default function luckysheetHandler() {
                 "RowlChange": RowlChange,
                 "cdformat": cdformat
             }
-
+            formula.checkMoveRangFormulas(d,range); //LIMCPQ
             jfrefreshgrid(d, range, allParam);
 
             selectHightlightShow();
