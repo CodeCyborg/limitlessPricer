@@ -50,8 +50,15 @@ const luckysheetformula = {
         for(let s = 0; s < range.length; s++){
             for(let r = range[s].row[0]; r <= range[s].row[1]; r++){
                 for(let c = range[s].column[0]; c <= range[s].column[1]; c++){
-                    if (d[r][c]!= null){
-                        if (d[r][c].f !== undefined && d[r][c].f.substring(0, 1)=="=" ){
+                    if (d[r][c]!= null && d[r][c].f !== undefined && d[r][c].f.substring(0, 1)=="="){
+                        //file.calcChain.push({"r": r,"c": c,"index": _indexSheet});
+                        let _calcIsFound = file.calcChain.some(element => {
+                            if (element.r === r && element.c===c && element.index===_indexSheet) {
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (!_calcIsFound){
                             file.calcChain.push({"r": r,"c": c,"index": _indexSheet});
                         }
                     }else{
@@ -4222,7 +4229,6 @@ const luckysheetformula = {
         setluckysheetfile(luckysheetfile);
     },
     getAllFunctionGroup: function () {
-        console.trace();
         let luckysheetfile = getluckysheetfile();
         let ret = [];
         for (let i = 0; i < luckysheetfile.length; i++) {
