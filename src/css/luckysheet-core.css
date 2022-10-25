@@ -7288,10 +7288,11 @@ fieldset[disabled] .btn-danger.focus {
     display: none;
     width: 20px;
     height: 20px;
-    background-color: #fff;
+    /*background-color: #fff;*/
     position: absolute;
     z-index: 10;
     overflow: hidden;
+    cursor: pointer;
 }
 #luckysheet-dataVerification-dropdown-btn::after{
     content: '';
