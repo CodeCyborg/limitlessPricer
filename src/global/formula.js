@@ -43,30 +43,266 @@ const luckysheetformula = {
     errorInfo: function (err) {
         return err;
     },
-    checkMoveRangFormulas: function (d,range) {//LIMCPQ
+    checkMoveRangFormulas: function (d,range,isConHis) {//LIMCPQ
         let _this = this ;
+        let _range = range;
+        let nsf = "";
         let _indexSheet = getSheetIndex(Store.currentSheetIndex);
         let file = luckysheet.getluckysheetfile()[_indexSheet];
-        for(let s = 0; s < range.length; s++){
-            for(let r = range[s].row[0]; r <= range[s].row[1]; r++){
-                for(let c = range[s].column[0]; c <= range[s].column[1]; c++){
-                    if (d[r][c]!= null && d[r][c].f !== undefined && d[r][c].f.substring(0, 1)=="="){
-                        //file.calcChain.push({"r": r,"c": c,"index": _indexSheet});
-                        let _calcIsFound = file.calcChain.some(element => {
-                            if (element.r === r && element.c===c && element.index===_indexSheet) {
-                                return true;
+        let difr = _range[1].row[0] - _range[0].row[0];
+        let difc = _range[1].column[0] - _range[0].column[0];
+        let indCalChain = _this.indexCalcChain(_range,_indexSheet, file.name);
+        if (d==null){
+            d = file.data ;
+        }
+        for(let s = 1; s < _range.length; s++){
+            for(let r = _range[s].row[0]; r <= _range[s].row[1]; r++){
+                for(let c = _range[s].column[0]; c <= _range[s].column[1]; c++){
+                    if (d[r-difr][c-difc] == null || d[r-difr][c-difc].f === undefined || d[r-difr][c-difc].f.substring(0, 1)!="=" ){
+                        _this.delFunctionGroup(r-difr,c-difc,_indexSheet);
+                    }
+                    if (d[r][c]!= null){
+                        if (d[r][c].f !== undefined && d[r][c].f.substring(0, 1)=="="){
+                            let _calcIsFound = file.calcChain.some(element => {
+                                if (element.r === r && element.c===c && element.index===_indexSheet) {
+                                    return true;
+                                }
+                                return false;
+                            });
+                            if (!_calcIsFound){
+                                file.calcChain.push({"r": r,"c": c,"index": _indexSheet});
                             }
-                            return false;
-                        });
-                        if (!_calcIsFound){
-                            file.calcChain.push({"r": r,"c": c,"index": _indexSheet});
+                            if (isConHis!==undefined && !isConHis){
+                                let _lpm = _this.getListParams(d[r][c].f);
+                                for(let i = 0; i < _lpm.length; i++){
+                                    let _rf = _lpm[i].b;
+                                    let _rs = _range[0];
+                                    if (_rs.row[0]<=_rf.row[0] && _rs.column[0]<=_rf.column[0] && _rs.row[1]>=_rf.row[1] && _rs.column[1]>=_rf.column[1] && _indexSheet==_rf.sheetIndex){
+                                        nsf = _lpm[i].a;
+                                        let _dirR = difr>0 ? "d": "u";
+                                        let _dirC = difc>0 ? "r" : "l";
+        
+                                        if (difr!=0){ nsf = _this.updateparam(_dirR,nsf,Math.abs(difr),true) }
+                                        if (difc!=0){ nsf = _this.updateparam(_dirC,nsf,Math.abs(difc),true) }
+                                        
+                                        //if (nsf != _this.error.r ){
+                                            d[r][c].f = d[r][c].f.replace(_lpm[i].a,nsf);
+                                        //}
+                                    }
+                                }
+                            }
+                            
                         }
-                    }else{
-                        _this.delFunctionGroup(r,c,_indexSheet);
                     }
                 }
             }
         }
+
+        //let fstr = "";
+        
+        
+        for (let i =0 ; i < indCalChain.length; i++ ){
+            let fData = Store.luckysheetfile[indCalChain[i].index].data[indCalChain[i].r][indCalChain[i].c].f ;
+            let lastPos = 0, fupd = false, CompFormStr = "";
+            for(let j =0 ; j < indCalChain[i].lpm.length; j++ ){
+                let fRang = indCalChain[i].lpm[j].b;
+                let _rs = _range[0]; let nsf = indCalChain[i].lpm[j].a;
+                if (_rs.row[0]<=fRang.row[0] && _rs.column[0]<=fRang.column[0] && _rs.row[1]>=fRang.row[1] && _rs.column[1]>=fRang.column[1] && _indexSheet==fRang.sheetIndex && fData.includes(nsf)){
+                    
+                    fupd = true;
+                    let _dirR = difr>0 ? "d": "u";
+                    let _dirC = difc>0 ? "r" : "l";
+                    if (difr!=0){ nsf = _this.updateparam(_dirR,nsf,Math.abs(difr),true) }
+                    if (difc!=0){ nsf = _this.updateparam(_dirC,nsf,Math.abs(difc),true) }
+                    CompFormStr += (fData.substring(lastPos,indCalChain[i].lpm[j].posStr) + nsf);
+                    lastPos=indCalChain[i].lpm[j].posEnd;
+                }else{
+                    CompFormStr += fData.substring(lastPos, indCalChain[i].lpm[j].posEnd) ;
+                    lastPos=indCalChain[i].lpm[j].posEnd;
+                }
+            }
+
+            if ( fupd ){
+                CompFormStr += fData.substring(lastPos,fData.length+1) ;
+                Store.luckysheetfile[indCalChain[i].index].data[indCalChain[i].r][indCalChain[i].c].f = CompFormStr;
+                let _dataf = d[indCalChain[i].r][indCalChain[i].c];
+                if ( _dataf.f!==undefined && _dataf.f!=null && _dataf.f==fData && indCalChain[i].index==_indexSheet ){
+                    _dataf.f = CompFormStr;
+                }
+                let dataRefInd = _this.groupValuesRefreshData.findIndex(
+                    x => x.c == indCalChain[i].c && x.r == indCalChain[i].r && x.index==indCalChain[i].index && x.f==fData
+                );
+                if (dataRefInd>-1 && isConHis ){
+                    _this.groupValuesRefreshData[dataRefInd].f = CompFormStr ; //fData.replace( indCalChain[i].lpm[j].a , nsf );
+                    _this.groupValuesRefreshData[dataRefInd].v = Store.luckysheetfile[indCalChain[i].index].data[indCalChain[i].r][indCalChain[i].c].v ;
+                }
+            }
+
+        }
+    },
+    indexCalcChain: function(mRange, currIndex, currName ){//LIMCPQ
+        let _this = this, ret = [];
+        let fs = luckysheet.getluckysheetfile();
+        for(let f = 0; f < fs.length; f++){
+            if ( fs[f].calcChain !== undefined ){
+                if (Number(fs[f].index)!=currIndex){//for all other sheets
+                    for (let cC=0; cC < fs[f].calcChain.length ; cC++){
+                        let calcR = fs[f].calcChain[cC].r;
+                        let calcC = fs[f].calcChain[cC].c;
+                        let df = fs[f].data[calcR][calcC].f ;
+                        if ( df !== undefined && df != null && df.includes(currName) ){//TODO gérer les ' et " dans les naming
+                            let _lpm = _this.getListParams(df, currName);
+                            ret.push({"r":calcR,"c":calcC,"index":fs[f].calcChain[cC].index,"lpm":_lpm});
+                        }
+                    }
+                }else{// for the current sheet
+                    for (let cC=0; cC < fs[f].calcChain.length ; cC++){
+                        let calcR = fs[f].calcChain[cC].r;
+                        let calcC = fs[f].calcChain[cC].c;
+                        let df = fs[f].data[calcR][calcC].f ;
+                        if ( !((mRange[0].row[0]<=calcR) && calcR<=(mRange[0].row[1]))  && !((mRange[0].column[0]<=calcC) && calcC<=(mRange[0].column[1])) ){
+                            if ( !((mRange[1].row[0]<=calcR) && calcR<=(mRange[1].row[1]))  && !((mRange[1].column[0]<=calcC) && calcC<=(mRange[1].column[1])) ){
+                                let _lpm = _this.getListParams(df, undefined, "!");
+                                if (_lpm.length>0){
+                                    ret.push({"r":calcR,"c":calcC,"index":fs[f].calcChain[cC].index,"lpm":_lpm});
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ret ;
+    },
+    getListParams: function (txt, currShName, exOS ){//LIMCPQ
+        let _this = this;
+        let eq = 0;
+        if (_this.operatorjson == null) {
+            let arr = _this.operator.split("|"),
+                op = {};
+
+            for (let i = 0; i < arr.length; i++) {
+                op[arr[i].toString()] = 1;
+            }
+
+            _this.operatorjson = op;
+        }
+
+        if (txt.substr(0, 1) == "=") {
+            txt = txt.substr(1);
+            eq += 1;
+        }
+
+        let funcstack = txt.split("");
+        let i = 0, str = "" ;
+        let _listRange = [];
+        let matchConfig = {
+            "bracket": 0,
+            "comma": 0,
+            "squote": 0,
+            "dquote": 0
+        };
+    
+        while (i < funcstack.length) {
+            let s = funcstack[i];
+
+            if (s == "(" && matchConfig.dquote == 0) {
+                matchConfig.bracket += 1;
+                str = "";
+            }
+            else if (s == ")" && matchConfig.dquote == 0) {
+                matchConfig.bracket -= 1;
+                str = _this.addListParam(str,currShName,exOS);
+                if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq,"posStr":i+eq-str.length,"b":_this.getcellrange(str)}) }
+                str = ""; 
+            }
+            else if (s == '"' && matchConfig.squote == 0) {
+                if (matchConfig.dquote > 0) {
+                    matchConfig.dquote -= 1;
+                    str = "";
+                }
+                else {
+                    matchConfig.dquote += 1;
+                    str += '"';
+                }
+            }
+            else if (s == ',' && matchConfig.dquote == 0) {
+                str = _this.addListParam(str,currShName,exOS);
+                if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq,"posStr":i+eq-str.length,"b":_this.getcellrange(str)}) }
+                str = "";
+            }
+            else if (s == '&' && matchConfig.dquote == 0) {
+                if (str.length > 0) {
+                    str = _this.addListParam(str,currShName,exOS);
+                    if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq,"posStr":i+eq-str.length,"b":_this.getcellrange(str)}) }
+                    str = "";
+                }
+            }
+            else if (s in _this.operatorjson && matchConfig.dquote == 0) {
+                let s_next = "";
+
+                if ((i + 1) < funcstack.length) {
+                    s_next = funcstack[i + 1];
+                }
+
+                let p = i - 1,
+                    s_pre = null;
+
+                if (p >= 0) {
+                    do {
+                        s_pre = funcstack[p--];
+                    }
+                    while (p >= 0 && s_pre == " ")
+                }
+
+                if ((s + s_next) in _this.operatorjson) {
+                    if (str.length > 0) {
+                        str = _this.addListParam(str,currShName,exOS);
+                        if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq,"posStr":i+eq-str.length,"b":_this.getcellrange(str)}) }
+                        str = "";
+                    }
+
+                    i++;
+                }
+                else if (!(/[^0-9]/.test(s_next)) && s == "-" && (s_pre == "(" || s_pre == null || s_pre == "," || s_pre == " " || s_pre in _this.operatorjson)) {
+                    str += s;
+                }
+                else {
+                    if (str.length > 0) {
+                        str = _this.addListParam(str,currShName,exOS);
+                        if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq,"posStr":i+eq-str.length,"b":_this.getcellrange(str)}) }
+                        str = "";
+                    }
+                }
+            }
+            else {
+                str += s;
+            }
+
+            if (i == funcstack.length - 1 && _this.iscelldata($.trim(str)) ) {
+                    str = _this.addListParam(str,currShName,exOS);
+                    if (str!=null){ _listRange.push({"a": str,"posEnd":i+eq+1,"posStr":i+eq-str.length+1,"b":_this.getcellrange(str)}) }
+            }
+            i++;
+        }
+        return _listRange;
+    },
+    addListParam : function(str,currShName,exOS){
+        if (this.iscelldata(str)){
+            if (currShName!==undefined ){//TODO gérer les ' et " dans les naming des sheets
+                if(str.includes(currShName)){ 
+                    return str;
+                }
+            }else if(exOS!==undefined){
+                if(!str.includes(exOS)){ 
+                    return str;
+                }
+            }
+            else{
+                return str;
+            }
+        }
+        return null;
     },
     errorParamCheck: function (thisp, data, i) {
         let type, require;
@@ -2010,7 +2246,7 @@ const luckysheetformula = {
         obj.text(prefix + newtxt);
         _this.setCaretPosition(obj.get(0), 0, newpos);
     },
-    updateparam: function (orient, txt, step) {
+    updateparam: function (orient, txt, step, move) {//LIMCPQ add move param vor all moving range processing
         let _this = this;
 
         let val = txt.split("!"),
@@ -2030,6 +2266,11 @@ const luckysheetformula = {
             let freezonFuc = _this.isfreezonFuc(rangetxt);
             let $row = freezonFuc[0] ? "$" : "",
                 $col = freezonFuc[1] ? "$" : "";
+
+                
+            if (move !== undefined){//LIMCPQ
+                freezonFuc = [false,false];
+            }
 
             if (orient == "u" && !freezonFuc[0]) {
                 row -= step;
@@ -2084,6 +2325,11 @@ const luckysheetformula = {
                 $col0 = freezonFuc0[1] ? "$" : "";
             let $row1 = freezonFuc1[0] ? "$" : "",
                 $col1 = freezonFuc1[1] ? "$" : "";
+
+            if (move !== undefined){//LIMCPQ
+                freezonFuc0 = [false,false];
+                freezonFuc1 = [false,false];
+            }
 
             if (orient == "u") {
                 if (!freezonFuc0[0]) {
@@ -3280,12 +3526,14 @@ const luckysheetformula = {
                     pfri[1] = n.length;
                 }
                 else {
-                    pfri[0] = pfri[0] + vlen - vplen;
-                    if (v_a.length > vp_a.length) {
-                        pfri[1] = v_a[i + 1].length;
-                    }
-                    else {
-                        pfri[1] = 1;
+                    if (pfri[1]>1){
+                        pfri[0] = pfri[0] + vlen - vplen;
+                        if (v_a.length > vp_a.length) {
+                            pfri[1] = v_a[i + 1].length;
+                        }
+                        else {
+                            pfri[1] = 1;
+                        }
                     }
                 }
 
@@ -3381,8 +3629,10 @@ const luckysheetformula = {
                 if (window.getSelection) { // all browsers, except IE before version 9
                     let currSelection = window.getSelection();
                     if ($(currSelection.anchorNode).is("div")) {
-                        let editorlen = $("#luckysheet-rich-text-editor span").length;
-                        _this.functionRangeIndex = [editorlen - 1, $("#luckysheet-rich-text-editor").find("span").eq(editorlen - 1).text().length];
+                        //let editorlen = $("#luckysheet-rich-text-editor span").length; 
+                        let editorlen = $($editer.selector +" span").length; //LIMCPQ bug fx editor on caret position
+                        //_this.functionRangeIndex = [editorlen - 1, $("#luckysheet-rich-text-editor").find("span").eq(editorlen - 1).text().length];
+                        _this.functionRangeIndex = [currSelection.anchorOffset-1, $($editer.selector +" span")[currSelection.anchorOffset-1].textContent.length ];
                     }
                     else {
                         _this.functionRangeIndex = [$(currSelection.anchorNode).parent().index(), currSelection.anchorOffset];

@@ -28,6 +28,13 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         return;
     }
 
+    //LIMCPQ no need for updating the cell when range is active 
+    //the Cell Update is already made in Formula.js line 2919
+    let _CB_editor = $(window.getSelection().anchorNode).closest("div"); 
+    if (_CB_editor.attr("id") == "luckysheet-functionbox-cell" && $("#luckysheet-formula-functionrange-select").is(":visible") ){
+        return ;
+    }
+
     // 钩子函数
     if(!method.createHookFunction('cellEditBefore',Store.luckysheet_select_save)){return;}
 
@@ -224,11 +231,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     else{
         value = formula.ltGtSignDeal(value);
         //fixing bug where selection of a cell doesn't work when editing formula from functionbox
-        let _CB_editor = $(window.getSelection().anchorNode).closest("div");
-        if (_CB_editor.attr("id") != "luckysheet-functionbox-cell") {
-            $("#luckysheet-rich-text-editor").html(value);
-        }
-        //$("#luckysheet-rich-text-editor").html(value);
+        //v3 : another more optimal fix added up
+        $("#luckysheet-rich-text-editor").html(value);
         if (!isnotfocus) {
             luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
         }

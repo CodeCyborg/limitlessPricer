@@ -88,8 +88,11 @@ const controlHistory = {
            // jfrefreshgrid(ctr.data, ctr.range, allParam);
 
             /* ⚠️  这个🌶️  dataRange表示的才是数据更新的位置 */
-            jfrefreshgrid(ctr.data, ctr.dataRange, allParam);
+            jfrefreshgrid(ctr.data, ctr.range, allParam);
 
+            if (ctr.range.length == 2){//LIMCPQ
+                formula.checkMoveRangFormulas(null,ctr.range.reverse(),true); //LIMCPQ
+            }
             // formula.execFunctionGroup(null, null, null, null, ctr.data);//取之前的数据
         }
         else if (ctr.type == "pasteCut") {
@@ -465,6 +468,10 @@ const controlHistory = {
             formulaHistoryHanddler(ctr, "undo");
 
             jfrefreshgrid(ctr.curdata, ctr.range, allParam);
+
+            if (ctr.range.length == 2){//LIMCPQ
+                formula.checkMoveRangFormulas(null,ctr.range.reverse(),true); //LIMCPQ
+            }
         }
         else if (ctr.type == "pasteCut") {
             jfrefreshgrid_pastcut(ctr.source, ctr.target, ctr.RowlChange);

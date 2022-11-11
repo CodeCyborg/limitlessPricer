@@ -560,5 +560,6 @@ export {
     selectionCopyShow,
     collaborativeEditBox,
     luckysheet_count_show,
-    selectHelpboxFill
+    selectHelpboxFill,
+    selectTitlesShow
 }

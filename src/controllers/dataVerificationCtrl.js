@@ -257,7 +257,11 @@ const dataVerificationCtrl = {
 
         //单元格数据验证 类型是 下拉列表
         $(document).off("click.dropdownBtn").on("click.dropdownBtn", "#luckysheet-dataVerification-dropdown-btn", function(e) {
-            _this.dropdownListShow();
+            if ( $("#luckysheet-dataVerification-dropdown-List").is(":hidden") ){
+                _this.dropdownListShow();
+            }else{
+                $("#luckysheet-dataVerification-dropdown-List").hide();
+            }
             e.stopPropagation();
         });
         $(document).off("click.dropdownListItem").on("click.dropdownListItem", "#luckysheet-dataVerification-dropdown-List .dropdown-List-item", function(e) {
@@ -274,7 +278,7 @@ const dataVerificationCtrl = {
             let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
             let rowIndex = last.row_focus;
             let colIndex = last.column_focus;
-
+            formula.rangetosheet = Store.currentSheetIndex;
             $("#luckysheet-rich-text-editor").text(value);
             formula.updatecell(rowIndex, colIndex);
 

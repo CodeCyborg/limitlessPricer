@@ -16,6 +16,7 @@ import formula from '../global/formula';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
+import { selectTitlesShow } from './select'; //LIMCPQ 11-11-22
 
 export function formulaBarInitial(){
     //公式栏处理
@@ -39,6 +40,11 @@ export function formulaBarInitial(){
             // }
             luckysheetupdateCell(row_index, col_index, Store.flowdata, null, true);
             formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
+            //LIMCPQ 11-11-22 show again selected cell after focus on fonction bar 
+            //selectHightlightShow();
+            $("#luckysheet-cell-selected-boxs #luckysheet-cell-selected").show();
+            selectTitlesShow(Store.luckysheet_select_save, false);
+            //LIMCPQ 11-11-22
         }
     }).keydown(function (event) {
         if(isEditMode()){//此模式下禁用公式栏

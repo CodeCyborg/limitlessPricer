@@ -3058,7 +3058,7 @@ fieldset[disabled] .btn-danger.focus {
 
 .luckysheet-input-box {
     position: absolute;
-    font: normal normal 400 13px arial, sans, sans-serif;
+    font: normal normal 400 13px calibri, arial, sans, sans-serif;
     text-align: left;
     top: -10000px;
     max-height: 9900px;
@@ -4856,14 +4856,16 @@ fieldset[disabled] .btn-danger.focus {
     top: 6px;
     resize: none;
     /*border: 1px #b9b9b9 solid;*/
-    font-family: arial, sans, sans-serif;
+    font-family: calibri, arial, sans, sans-serif;
     font-size: 14px;
     line-height: 14px;
     background-color: #ffffff;
     padding: 0px 5px;
 }
 
-
+.luckysheet-formula-functionrange-cell {
+    font-weight: bold;
+  }
 
 #luckysheet-functionbox .luckysheet-functionbox-cell-input {
     word-wrap: break-word;
@@ -4888,7 +4890,7 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 .luckysheet-formula-text-string {
-    color: forestgreen;
+    color: #808080;
 }
 
 .luckysheet-formula-search-c {
