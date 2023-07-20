@@ -29,7 +29,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
     else {
         $("#" + Store.container).find(".luckysheet-wa-editor").show();
         // Store.toolbarHeight = 72;
-        Store.toolbarHeight = document.querySelector('#' + Store.container +' .luckysheet-wa-editor').offsetHeight;
+        Store.toolbarHeight = document.querySelector('#' + Store.container +' .luckysheet-wa-editor').offsetHeight + document.querySelector('#lm_menu').offsetHeight;
     }
 
     // if (!luckysheetConfigsetting.showsheetbar) {

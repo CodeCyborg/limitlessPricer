@@ -454,7 +454,7 @@
 .sp-palette .sp-thumb-el {
     width: 16px;
     height: 16px;
-    border-radius: 16px;
+    border-radius: 1px;
     margin: 2px 1px;
     border: solid 1px #d0d0d0
 }
@@ -546,7 +546,7 @@
 .sp-palette .sp-thumb-inner {
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    border-radius: 16px;
+    border-radius: 1px;
 }
 
 .sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {

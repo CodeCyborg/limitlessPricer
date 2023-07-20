@@ -207,7 +207,7 @@
     position: relative;
     /* padding-left: 15px; */
     /* padding: 0px 0px 10px 15px; */
-    padding: 5px 0px 3px 15px;
+    padding: 0px 0 0px 12px;
     border-bottom: 1px solid #d4d4d4;
     white-space: nowrap;
     transition: all 0.2s;
@@ -1403,6 +1403,8 @@ div.luckysheet-sheets-m:hover {
     display: none;
     transition: all 0.1s;
     background-color: rgba(76, 76, 76, 0.1);
+    padding: 0px 2px 0px 2px;
+    background-clip: content-box, padding-box;
     /*left: 2489px;
              width: 863px;*/
 }
@@ -1539,6 +1541,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     display: none;
     transition: all 0.1s;
     background-color: rgba(76, 76, 76, 0.1);
+    padding: 2px 0px 2px 0px;
+    background-clip: content-box, padding-box;
     /*top: 106px;
              height: 145px;*/
 }
@@ -1913,7 +1917,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     height: 2px;
     top: 0;
     background-position: bottom;
-    background-image: url("EwaAntH.gif");
+    /*background-image: url("EwaAntH.gif");*/
 }
 
 .luckysheet-selection-copy-right {
@@ -1921,7 +1925,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     bottom: 0;
     width: 2px;
     right: 0;
-    background-image: url("EwaAntV.gif");
+    /*background-image: url("EwaAntV.gif");*/
 }
 
 .luckysheet-selection-copy-bottom {
@@ -1929,7 +1933,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     right: 0;
     height: 2px;
     bottom: 0;
-    background-image: url("EwaAntH.gif");
+    /*background-image: url("EwaAntH.gif");*/
 }
 
 .luckysheet-selection-copy-left {
@@ -1938,7 +1942,15 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     width: 2px;
     left: 0;
     background-position: right;
-    background-image: url("EwaAntV.gif");
+    /*background-image: url("EwaAntV.gif");*/
+}
+
+.luckysheet-selection-copy-left,.luckysheet-selection-copy-right{
+    background-image: url(data:image/gif;base64,R0lGODlhBAAGAJEAAAAAAP///yuFZf///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwADACwAAAAABAAGAAACB0wkhsurGQoAIfkEBQAAAwAsAAAAAAQABgAAAgeUFWF5qN4KACH5BAUAAAMALAAAAQAEAAQAAAIFlBWpeVIAIfkEBQAAAwAsAAABAAQABAAAAgaUEoaoKQUAIfkEBQAAAwAsAAAAAAQABgAAAgiUEobGvJdEAQAh+QQFAAADACwAAAAABAAGAAACB4wjqctyUQAAOw==);
+}
+
+.luckysheet-selection-copy-bottom,.luckysheet-selection-copy-top{
+    background-image: url(data:image/gif;base64,R0lGODlhBgAEAJEAAAAAAP///yuFZf///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwADACwAAAAABgAEAAACB5QVcZh6uQoAIfkEBQAAAwAsAAAAAAYABAAAAgiUE3YpqM1EAQAh+QQFAAADACwBAAAABAAEAAACBlwmhnk8BQAh+QQFAAADACwBAAAABAAEAAACBsw0hpccBQAh+QQFAAADACwAAAAABgAEAAACB0yEYsl6aQoAIfkEBQAAAwAsAAAAAAYABAAAAgiMLmGomHtCAQA7);
 }
 
 .luckysheet-selection-copy-hc {
@@ -2298,9 +2310,9 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-cols-menu {
     max-height: 100%;
     overflow-y: auto;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -2321,6 +2333,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     box-sizing: border-box;
     user-select: none;
     display: none;
+    font-weight: bold;
+    font-family: sans-serif;
 }
 
 .luckysheet-cols-menu .luckysheet-cols-menuitem {
@@ -7360,3 +7374,16 @@ fieldset[disabled] .btn-danger.focus {
     cursor: default;
     opacity: .4;
 }
+
+
+.lmSubMenu{
+    display: inline-block;
+}
+  
+/*.luckysheet-toolbar-button, .luckysheet-toolbar-menu-button, .luckysheet-toolbar-separator, .luckysheet-toolbar-combo-button{
+    display: none;
+}
+
+.limcpqHome{
+    display: inline-block;
+}*/

@@ -34,7 +34,14 @@ const gridHTML = function(){
                             <span id="luckysheet_info_detail_user">${userInfo.userName}</span>
                             </div>` : ''}
                             
-                        </div> 
+                        </div>
+                        <div id="lm_menu" class="lmMenu">
+                            <div id="limcpqHome" class="lmSubMenu">Home</div>
+                            <div id="limcpqInsert" class="lmSubMenu">Insert</div>
+                            <div id="limcpqData" class="lmSubMenu">Data</div>
+                            <div id="limcpqExc" class="lmSubMenu" onclick="document.getElementById('limcpqExcFile').click();">Import Excel</div>
+                            <input type="file" name="name" style="display: none;" id="limcpqExcFile" onchange="limcpqExcFileHandler(this)" >
+                        </div>
                         <div id="luckysheet-wa-editor" class="luckysheet-wa-editor toolbar"> \${menu} </div> 
                         <div id="luckysheet-wa-calculate" class="luckysheet-wa-calculate"> 
                             <div class="luckysheet-wa-calculate-size" id="luckysheet-wa-calculate-size"></div> 

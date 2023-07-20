@@ -229,7 +229,7 @@ function selectTitlesShow(rangeArr, isRestore = false) {
         let r1 = rowTitleRange[i][0], r2 = rowTitleRange[i][rowTitleRange[i].length - 1];
         let row = rowLocationByIndex(r2)[1], row_pre = rowLocationByIndex(r1)[0];
 
-        $("#luckysheet-rows-h-selected").append('<div class="luckysheet-rows-h-selected" style="top: ' + row_pre + 'px; height: ' + (row - row_pre - 1) + 'px; display: block; background-color: rgba(76, 76, 76, 0.1);"></div>');
+        $("#luckysheet-rows-h-selected").append('<div class="luckysheet-rows-h-selected" style="top: ' + (row_pre - 2) + 'px; height: ' + (row - row_pre -1) + 'px; display: block; background-color: rgba(76, 76, 76, 0.1);"></div>');
     }
 
     //列标题
@@ -240,7 +240,7 @@ function selectTitlesShow(rangeArr, isRestore = false) {
         let c1 = columnTitleRange[j][0], c2 = columnTitleRange[j][columnTitleRange[j].length - 1];
         let col = colLocationByIndex(c2)[1], col_pre = colLocationByIndex(c1)[0];
 
-        $("#luckysheet-cols-h-selected").append('<div class="luckysheet-cols-h-selected" style="left: ' + col_pre + 'px; width: ' + (col - col_pre - 1) + 'px; display: block; background-color: rgba(76, 76, 76, 0.1);"></div>');
+        $("#luckysheet-cols-h-selected").append('<div class="luckysheet-cols-h-selected" style="left: ' + (col_pre - 2) + 'px; width: ' + (col - col_pre - 1) + 'px; display: block; background-color: rgba(76, 76, 76, 0.1);"></div>');
 
     }
 }
@@ -510,7 +510,7 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             topv = scrollHeight + drawHeight / 2;
         }
 
-        $("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
+        //$("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
     }
     else {
         $("#luckysheet-row-count-show").hide();
@@ -531,7 +531,7 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             leftv = scrollWidth + drawWidth / 2;
         }
 
-        $("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
+        //$("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
     }
     else {
         $("#luckysheet-column-count-show").hide();

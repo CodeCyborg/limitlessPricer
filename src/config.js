@@ -8,7 +8,7 @@ export default {
     row: 50, //空表格默认的行数据量
     allowCopy: true, //是否允许拷贝
     showtoolbar: true, //是否第二列显示工具栏
-    showinfobar: true, //是否显示顶部名称栏
+    showinfobar: false, //是否显示顶部名称栏
     showsheetbar: true, //是否显示底部表格名称区域
     showstatisticBar: true, //是否显示底部计数栏
     pointEdit: false, //是否是编辑器插入表格模式
