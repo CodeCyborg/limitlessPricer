@@ -1636,8 +1636,8 @@ const selection = {
             selectHightlightShow();
         }
     },
-    pasteHandlerOfPaintModel: function(copyRange){
-        if(!checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)){
+    pasteHandlerOfPaintModel: function(copyRange,activeSecurity){
+        if(activeSecurity!= false && !checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)  ){
             return;
         }
 

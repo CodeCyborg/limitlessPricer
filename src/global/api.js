@@ -1,6 +1,7 @@
 import Store from "../store";
-import { replaceHtml, getObjType, chatatABC, luckysheetactiveCell } from "../utils/util";
-import { getSheetIndex, getluckysheet_select_save, getluckysheetfile } from "../methods/get";
+import { replaceHtml, getObjType, chatatABC, luckysheetactiveCell, openSelfModel } from "../utils/util";
+import { modelHTML } from "../controllers/constant";
+import { getSheetIndex, getconfig, getluckysheet_select_save, getluckysheetfile } from "../methods/get";
 import locale from "../locale/locale";
 import method from './method';
 import formula from './formula';
@@ -41,6 +42,7 @@ import imageCtrl from '../controllers/imageCtrl';
 import dayjs from "dayjs";
 import {getRangetxt } from '../methods/get';
 import {luckysheetupdateCell} from '../controllers/updateCell';
+import { options } from "numeral";
 const IDCardReg = /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
 
 /**
@@ -93,6 +95,376 @@ export function getCellValue(row, column, options = {}) {
     }
 
     return return_v;
+}
+
+
+// Added api new function LIMCPQ
+export function copySelection(range,row, column) {
+    //DeleteRowAskForm();
+    //insertDeleteRowConfirmForm("insert");
+    insertRowInformForm();
+}
+
+export function initDeleteRow(onSel){
+    if (onSel!= undefined && onSel== true ){
+        let range = getRange();
+        r = range[0].row;
+        insertDeleteRowConfirmForm("delete", r[0]+1, r[1]+1);
+    }else{
+        DeleteRowAskForm();
+    }
+}
+
+export function setInsertLineRef(){
+    let range = getRange();
+    cNbr = luckysheet.getSheetData()[0].length;
+    c = range[0].column;
+    r = range[0].row;
+    let InsertRefLine = getRefInsertLineExist();
+    if (InsertRefLine != null){
+        let nr = InsertRefLine+1
+        generalInformForm(`<p>There is already an insert Line reference exists on row ${nr} </p>`);
+        return;
+    }
+    if(c[1]-c[0]==cNbr-1 && r[0]==r[1]){
+        let defiLineAddRow = "CPQ_AddRowHere()";
+        let defiLineAddRowMsg = "please don't touch this row, unless you are a CPQ administrator !";
+        let infoFormMsg = ` <p>The row ${r[0]+1} is set as a line reference for inserting new rows by end users.</p>
+                            <p> Please make sure this line is included in your formulas which need to be updaded after each new row added</p>`;
+        setcellvalue(r[0],0,null,defiLineAddRow);
+        if (c[1]>=1){
+            setcellvalue(r[0],1,null,defiLineAddRowMsg);
+        }
+        hideRow(r[0],r[0]);
+        refresh();
+        generalInformForm(infoFormMsg);
+    }
+}
+
+
+export function initInsertRow(onSel){
+    if (onSel!= undefined && onSel== true ){
+        let range = getRange();
+        r = range[0].row;
+        let okAddRow = false ;
+
+        let authority = luckysheet.getluckysheetfile()[Store.currentSheetIndex].config.authority;
+        if (authority !== undefined && authority.sheet !=0 ){
+            let allowedRanges = authority.allowRangeList ;
+            for(let ag = 0; ag < allowedRanges.length; ag++){
+                let nRange = formula.getcellrange(allowedRanges[ag].sqref);
+                if ( r[0] >= nRange.row[0] && r[0] <= nRange.row[1] ){
+                    okAddRow = true;
+                    break;
+                }
+            }
+        }else{
+            okAddRow = true;
+        }
+        if (okAddRow){
+            insertDeleteRowConfirmForm("insert", r[0]+1);
+        }
+    }else{
+        insertRowv2(null);
+    }
+}
+
+
+function DeleteRowAskForm(){
+    // let idHtml = "AddorDeleteRow";
+    let contentHtml = ` <div class="luckysheet-slider-protection-row">
+                            <div id="luckysheet-protection-range-validation-hint" class="luckysheet-slider-protection-column luckysheet-protection-column-10x">
+                                <p>
+                                    blablabla
+                                </p>
+                                
+                            </div>
+                        </div>
+                        <div class="luckysheet-slider-protection-row" style="margin-top:20px">
+                            <div class="luckysheet-slider-protection-column luckysheet-protection-column-10x">
+                                <input type="number" id="DeleteRowAskForm-Input-Raw" class="DeleteRowAskForm-Input-Raw" value="" placeHolder="input the raw number to delete or add">
+                            </div>
+                        </div>`;
+    let buttonHtml = `  <button id="DeleteRowAskForm-confirm" class="btn btn-primary">confirm</button>
+                        <button class="btn btn-default luckysheet-model-close-btn">Cancel</button>`;
+    let titleHtml = "add or delete new line";
+    setUpForm("DeleteRowAskForm",titleHtml,contentHtml,buttonHtml, true, "askDelete", $("#DeleteRowAskForm-Input-Raw").val() );
+}
+
+function insertDeleteRowConfirmForm(action, rowLineStr, rowLineEnd){
+    let rowText = "";
+    if (rowLineEnd!=undefined && rowLineEnd!=null){
+        for(let r = rowLineStr ; r <= rowLineEnd; r++){
+            rowText = rowText+' '+r
+        }
+    }else{
+        rowText = rowLineStr;
+    }
+
+    let text = action =="insert"    ?   'Do you realy want to insert an empty row above the line '+ rowText
+                                    :   'Do you realy want to delete the row(s) '+ rowText ;
+    let contentHtml = ` <div>
+                            <p>
+                                ${text} 
+                            </p>
+                        </div>`;
+    let buttonHtml = `  <button id="insertDeleteRowConfirmForm-confirm" class="btn btn-primary">Yes</button>
+                        <button class="btn btn-default luckysheet-model-close-btn">No</button>`;
+    let titleHtml = "";//action+" Row";
+    if (action =="insert"){
+        setUpForm("insertDeleteRowConfirmForm",titleHtml,contentHtml,buttonHtml, true, "insert", rowLineStr, null );
+    }else{
+        setUpForm("insertDeleteRowConfirmForm",titleHtml,contentHtml,buttonHtml, true, "delete", rowLineStr, rowLineEnd );
+    }
+    
+}
+
+function insertRowInformForm(){
+    let contentHtml = ` <div>
+                            <p>
+                                Information : did you know ? if you select a line before adding a row, the inserted row will be added juste bellow th added line.
+                            </p>
+                        </div>`;
+    let buttonHtml = `  <button id="insertRowInformForm-confirm" class="btn btn-primary">ok</button>`;
+    let titleHtml = "";//action+" Row";
+    setUpForm("insertRowInformForm",titleHtml,contentHtml,buttonHtml, false, false, null, null);
+}
+
+function generalInformForm(msg){
+    let contentHtml = ` <div>
+                            <p>
+                                ${msg} 
+                            </p>
+                        </div>`;
+    let buttonHtml = `  <button id="generalInformForm-confirm" class="btn btn-primary">ok</button>`;
+    let titleHtml = "";//action+" Row";
+    setUpForm("generalInformForm",titleHtml,contentHtml,buttonHtml, true, false, null, null);
+}
+
+function setUpForm(id,titleHtml,contentHtml,buttonHtml, repeat, clickAction, param, paramEnd){
+    let ft = false;
+    if ($("#"+id).length == 0){
+        $("body").first().append(replaceHtml(modelHTML, { 
+            "id": id, 
+            "addclass": id, 
+            "title": titleHtml, //TODO : translation
+            "content": contentHtml, 
+            "botton": buttonHtml , 
+            "style": "z-index:100003" 
+        }));
+        
+        ft = true ;
+    }else{
+        if (repeat){
+            $("#"+id+" .luckysheet-modal-dialog-content").html(contentHtml);
+            $("#"+id+"-Input-Raw").val("");
+        }
+    }
+
+    $("#"+id+"-confirm").off('click');
+    $("#"+id+"-confirm").click(function(){
+        $("#"+id).hide();
+        $("#luckysheet-modal-dialog-mask").hide();
+        switch (clickAction) {
+            case "askDelete":
+                insertDeleteRowConfirmForm("delete", $("#DeleteRowAskForm-Input-Raw").val() );
+                break;
+            case 'delete':
+                deleteRowV2(param, paramEnd);
+                break;
+            case 'insert':
+                insertRowv2(param);
+                break;
+            case 'notused':
+              console.log('notused');
+              // Expected output: "Mangoes and papayas are $2.79 a pound."
+              break;
+            // default:
+            //   console.log(`Sorry, we are out of ${expr}.`);
+        }
+          
+    });
+
+    $("#luckysheet-rightclick-menu").hide();
+    if (repeat || ft ){
+        openSelfModel(id);
+    }
+    
+}
+
+
+function checkDeleteControls(action, rowLine){
+    let hiddenRows = getconfig().rowhidden ;
+    let authority = luckysheet.getluckysheetfile()[Store.currentSheetIndex].config.authority;
+    rowLine = parseInt(rowLine);
+    let nr = rowLine+1;
+    let returnObj = {
+        f:  true,
+        msg: ""
+    };
+
+    for (let r in hiddenRows) {
+        if (r == rowLine){
+            returnObj.f = false ;
+            returnObj.msg = `<p>you are not allowed to delete this hidden row ${nr} </p>`  ;
+            return returnObj;
+            
+        }
+    }
+
+    if (authority !== undefined && authority.sheet !=0 ){
+        let allowedRanges = authority.allowRangeList ;
+        for(let ag = 0; ag < allowedRanges.length; ag++){
+            let nRange = formula.getcellrange(allowedRanges[ag].sqref);
+            if ( rowLine >= nRange.row[0] && rowLine <= nRange.row[1] ){
+                return returnObj;
+            }
+        }
+        returnObj.f = false ;
+        returnObj.msg = `<p>you are not allowed to delete this locked row ${nr} </p>`  ;
+        return returnObj;
+    }
+    return returnObj;
+}
+
+
+function deleteRowV2(rowLineStr, rowLineEnd){
+    if (rowLineEnd==undefined || rowLineEnd==null){
+        rowLineEnd=rowLineStr;
+    }
+
+    rowLineStr = parseInt(rowLineStr)-1;
+    rowLineEnd = parseInt(rowLineEnd)-1;
+    RoCount = rowLineEnd-rowLineStr+1;
+
+    for(let r = rowLineStr ; r <= rowLineEnd ; r++){
+        let rowLine = r;
+        let fdback = checkDeleteControls("delete",rowLine);
+        if(!fdback.f){
+            generalInformForm(fdback.msg);
+            return;
+        } 
+    }
+
+    let SuccOptions = {   success : function(){   updateUnlokedRanges(rowLineEnd,"u",RoCount); }    };
+    deleteRow(rowLineStr,rowLineEnd,SuccOptions );
+}
+
+function getRefInsertLineExist(){
+    let curv = Store.flowdata;
+    let defiLineAddRow = "CPQ_AddRowHere()";
+    let hiddenRows = getconfig().rowhidden ;
+    for (let r in hiddenRows) {
+        if (curv[r][0]!=null && curv[r][0].v == defiLineAddRow){
+            return parseInt(r);
+        }
+    }
+    return null;
+}
+
+function insertRowv2(rowLine){
+    let rowToCopy = 1;
+    let toRecal = 0;
+    if (rowLine == null){
+        let InsertRefLine = getRefInsertLineExist();
+        if(InsertRefLine != null){
+            rowToCopy = -1 ;
+            toRecal = 1 ;
+            rowLine = parseInt(InsertRefLine);
+            insertRowInformForm();
+        }else{
+            generalInformForm("No reference found for row insertion, please contact your Admin.")
+            return;
+        }
+    }else{
+        rowLine = parseInt(rowLine)-1; //remove 1 to get the real line number
+    }
+    
+    let rowRef = rowLine+rowToCopy; //add line since a row is added juste before paste forme paint
+
+    // Seting obkect for copy paint
+    let cNbr = luckysheet.getSheetData()[0].length;
+    let sel = selection;
+    let objCopyRange= {
+        dataSheetIndex : getSheetIndex(Store.currentSheetIndex),
+        copyRange: [{ row: [ rowRef, rowRef ], column: [0,cNbr-1] }],
+        RowlChange: false,
+        HasMC: false
+    }
+
+    // getting cureunt line formula
+    let shIndex = getSheetIndex(Store.currentSheetIndex);
+    let _data = Store.luckysheetfile[shIndex].data;
+    let oFormula = [];
+    for(let c = 0; c < _data[rowLine-toRecal].length; c++){
+        if (_data[rowLine-toRecal][c]!=null && _data[rowLine-toRecal][c].f != undefined && typeof(_data[rowLine-toRecal][c].f)=="string" ){
+            oFormula.push({r:rowLine, c:c, f: _data[rowLine-toRecal][c].f }) ;
+        }
+    }
+
+    //commit the add Row, paint format, unlock ...
+    let SuccOptions = {   success : function(){   
+        updateUnlokedRanges(rowLine,"d",1); 
+        sel.pasteHandlerOfPaintModel(objCopyRange, false); 
+        insertFormulas(oFormula, rowToCopy);
+        }    
+    };
+    insertRow(rowLine, SuccOptions);
+}
+
+
+function insertFormulas(oFormula, step){
+    //let shIndex = getSheetIndex(Store.currentSheetIndex);
+    // let _data = Store.luckysheetfile[shIndex].data;
+    // for(let c = 0; c < _data[rowRef].length; c++){
+    //     if (_data[rowRef][c]!=null && _data[rowRef][c].f != undefined && typeof(_data[rowRef][c].f)=="string" ){
+    //         let _dirR = step<0 ? "d": "u";
+    //         let oFormula = _data[rowRef][c].f;
+    //         let _formula = formula ;
+    //         let lpm = formula.getListParams(oFormula);
+    //         let nFormula=oFormula;
+    //         // let nFormula = oFormula.replace( lpm.a , formula.updateparam(_dirR,lpm.a , 1) ) ;
+
+    //         for(let i = 0; i < lpm.length; i++){
+    //             let functionStr = "=" + formula.functionStrChange(lpm[i].a, "add", "row", "lefttop", rowEdit, step );
+    //             nFormula = nFormula.replace( lpm[i].a , functionStr ) ;
+    //         }
+    //         luckysheet.setCellValue(rowEdit, c, {f: nFormula});
+    //         // formula.execFunctionGroup(); // TODO : add func execution to refresh cell
+    //         // refresh();
+
+    //     }
+    // }
+    
+    for(let i = 0; i < oFormula.length; i++){
+        let nFormula = "";
+        let _formula = formula ;
+        if(step < 0){
+            nFormula = "=" + formula.functionStrChange(oFormula[i].f, "add", "row", "lefttop", oFormula[i].r+step , 1 );
+        }else{
+            nFormula = oFormula[i].f ;
+        }
+        // luckysheet.setCellValue(oFormula[i].r, oFormula[i].c, {f: nFormula});
+        luckysheet.setCellValue(oFormula[i].r , oFormula[i].c, nFormula);
+    }        
+
+}
+
+
+function updateUnlokedRanges(row,orient,move){
+    let order = getSheetIndex(Store.currentSheetIndex);
+    let authority = Store.luckysheetfile[order].config.authority;
+    if (authority !== undefined && authority.sheet !=0 ){
+        let allowedRanges = authority.allowRangeList ;
+        for(let ag = 0; ag < allowedRanges.length; ag++){
+            let nRange = formula.getcellrange(allowedRanges[ag].sqref);
+            if ( row >= nRange.row[0] && row <= nRange.row[1]+1 ){  //+1 bcz the line is already added
+                let aRangeSplit =  allowedRanges[ag].sqref.split(':') ;
+                let mRange = formula.updateparam(orient,aRangeSplit[1],move,true);
+                Store.luckysheetfile[order].config.authority.allowRangeList[ag].sqref= aRangeSplit[0]+':'+mRange;
+            }
+        }
+    }
 }
 
 /**

@@ -1886,14 +1886,17 @@
 				},
 				imageClass:"loadingAnimation"
 			};
-			// options.cellRightClickConfig = {
-			// 	customs: [{
-			// 		title: 'test',
-			// 		onClick: function (clickEvent, event, params) {
-			// 			console.log('function test click', clickEvent, event, params)
-			// 		}
-			// 	}]
-			// };
+			options.cellRightClickConfig = {
+				customs: [{
+					title: 'Set as Insert reference',
+					// onClick: function (clickEvent, event, params) {
+					// 	console.log('function test click', clickEvent, event, params)
+					// }
+					onClick: function(){
+						luckysheet.setInsertLineRef()
+					}
+				}]
+			};
 			if (confirm('do you want to open empty template')) {
 				options = null;
 			} 			
