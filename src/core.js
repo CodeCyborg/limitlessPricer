@@ -257,6 +257,14 @@ luckysheet.luckysheetextendData = luckysheetextendData;
 
 luckysheet.locales = locales;
 
+//custom event
+luckysheet.updateEvent = function(callback) {
+    document.addEventListener('customEvent', function(event) {
+      callback(event.detail);
+    });
+}
+
+
 export {
     luckysheet
 }

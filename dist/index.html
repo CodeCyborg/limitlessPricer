@@ -56,6 +56,8 @@
 		// import sheetPicture from './demoData/sheetPicture.js'
 		// import sheetDataVerification from './demoData/sheetDataVerification.js'
 
+		
+
 		$(function () {
 
 			// According to the browser language
@@ -1900,7 +1902,11 @@
 			if (confirm('do you want to open empty template')) {
 				options = null;
 			} 			
-			luckysheet.create(options);
+				luckysheet.create(options);
+				
+				luckysheet.updateEvent(function(data) {
+					console.log(data);
+				});
 			})
 	</script>
 	<script>

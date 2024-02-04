@@ -1,7 +1,7 @@
 /**
  * Monitor special variables
  */
-import {createProxy} from '../utils/util';
+import {createProxy, triggerUpdateEvent} from '../utils/util';
 import Store from '../store/index';
 import method from '../global/method';
 import { getluckysheetfile } from '../methods/get'
@@ -12,6 +12,7 @@ function undoAccessible(len) {
     clearTimeout(undoTimer);
     undoTimer = setTimeout(() => {
         $('#luckysheet-icon-undo')[len ? 'removeClass' : 'addClass']('disabled');
+        triggerUpdateEvent('update');
     }, 10);
 }
 function redoAccessible(len) {

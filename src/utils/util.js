@@ -888,6 +888,12 @@ function arrayRemoveItem(array, item) {
         return '-' + group.toLowerCase();
     });
 }
+
+function triggerUpdateEvent (data) {
+    if (!data) return ;
+    const event = new CustomEvent('customEvent', { detail: data });
+    document.dispatchEvent(event);
+}
   
 export {
     isJsonString,
@@ -918,5 +924,6 @@ export {
     openSelfModel,
     createProxy,
     arrayRemoveItem,
-    camel2split
+    camel2split,
+    triggerUpdateEvent
 }
